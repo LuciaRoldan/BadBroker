@@ -17,8 +17,8 @@ jobs:
         with:
           dotnet-version: 6.0
       - name: Install dependencies
-        run: dotnet restore BadBroker
+        run: dotnet restore BadBroker.Api
       - name: Build
-        run: dotnet build BadBroker --configuration Release --no-restore
+        run: dotnet build BadBroker.Api --configuration Release --no-restore
       - name: Test
         run: dotnet test BadBroker.Unit.Tests --no-restore --verbosity normal

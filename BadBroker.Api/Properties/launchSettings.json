@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "BadBroker": {
+    "BadBroker.Api": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

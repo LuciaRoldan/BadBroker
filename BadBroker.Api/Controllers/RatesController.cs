@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace BadBroker.Controllers;
+namespace BadBroker.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
@@ -14,8 +14,8 @@ public class RatesController : ControllerBase
     }
 
     [HttpGet("best")]
-    public List<WeatherForecast> GetBestRatesFor()
+    public List<string> GetBestRatesFor()
     {
-        return new List<WeatherForecast>();
+        return new List<string>();
     }
 }

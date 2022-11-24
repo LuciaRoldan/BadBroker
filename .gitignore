@@ -1,4 +1,4 @@
-BadBroker/bin
-BadBroker/obj
+BadBroker.Api/bin
+BadBroker.Api/obj
 BadBroker.Unit.Tests/bin
 BadBroker.Unit.Tests/obj
