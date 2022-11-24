@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/home/lu/Documents/Saritasa/BadBroker/BadBroker.csproj": {}
+    "/home/lu/Documents/Saritasa/BadBroker/BadBroker/BadBroker.csproj": {}
   },
   "projects": {
-    "/home/lu/Documents/Saritasa/BadBroker/BadBroker.csproj": {
+    "/home/lu/Documents/Saritasa/BadBroker/BadBroker/BadBroker.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/lu/Documents/Saritasa/BadBroker/BadBroker.csproj",
+        "projectUniqueName": "/home/lu/Documents/Saritasa/BadBroker/BadBroker/BadBroker.csproj",
         "projectName": "BadBroker",
-        "projectPath": "/home/lu/Documents/Saritasa/BadBroker/BadBroker.csproj",
+        "projectPath": "/home/lu/Documents/Saritasa/BadBroker/BadBroker/BadBroker.csproj",
         "packagesPath": "/home/lu/.nuget/packages/",
-        "outputPath": "/home/lu/Documents/Saritasa/BadBroker/obj/",
+        "outputPath": "/home/lu/Documents/Saritasa/BadBroker/BadBroker/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/lu/.nuget/NuGet/NuGet.Config"

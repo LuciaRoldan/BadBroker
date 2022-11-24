@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "3mRdxjfWd/vdy8/wgwWwZ4vBJXwHXyNlTHcCE6p07lrVJxYXJAgR8SUUvboZIjxnAu+/rL/+BKQU1+B2ZJXCaA==",
+  "dgSpecHash": "ZjzrEghlsnd0Jnigr7zfAwlJ38I55q6MNhj/ALF1Rr877pbngl2QMSFT9KyWgks6DpdqbBPjHK+4pjRB7+VUEQ==",
   "success": true,
-  "projectFilePath": "/home/lu/Documents/Saritasa/BadBroker/BadBroker.csproj",
+  "projectFilePath": "/home/lu/Documents/Saritasa/BadBroker/BadBroker/BadBroker.csproj",
   "expectedPackageFiles": [
     "/home/lu/.nuget/packages/microsoft.entityframeworkcore/7.0.0/microsoft.entityframeworkcore.7.0.0.nupkg.sha512",
     "/home/lu/.nuget/packages/microsoft.entityframeworkcore.abstractions/7.0.0/microsoft.entityframeworkcore.abstractions.7.0.0.nupkg.sha512",
