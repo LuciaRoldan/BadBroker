@@ -1,0 +1,4 @@
+{
+    "dotnet-test-explorer.testProjectPath": "BadBroker.Unit.Tests/BadBroker.Unit.Tests.csproj",
+    "files.autoSave": "afterDelay"
+}
