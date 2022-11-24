@@ -16,4 +16,8 @@
     <PackageReference Include="coverlet.collector" Version="3.1.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="../BadBroker.Api/BadBroker.Api.csproj"/>
+  </ItemGroup>
+
 </Project>
