@@ -1,3 +1,4 @@
+using BadBroker.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BadBroker.Api.Controllers;
@@ -7,15 +8,17 @@ namespace BadBroker.Api.Controllers;
 public class RatesController : ControllerBase
 {
     private readonly ILogger<RatesController> _logger;
+    private IRatesService _ratesService;
 
-    public RatesController(ILogger<RatesController> logger)
+    public RatesController(ILogger<RatesController> logger, IRatesService ratesService)
     {
         _logger = logger;
+        _ratesService = ratesService;
     }
 
     [HttpGet("best")]
-    public List<string> GetBestRatesFor()
+    public BestRatesResponse GetBestRatesFor([FromQuery(Name = "startDate")] DateTime startDate, [FromQuery(Name = "endDate")] DateTime endDate, [FromQuery(Name = "moneyUsd")] double moneyUsd)
     {
-        return new List<string>();
+        return _ratesService.GetBestRatesFor(startDate, endDate, moneyUsd);
     }
 }
