@@ -6,7 +6,7 @@ using Moq;
 
 namespace BadBroker.Unit.Tests.Controllers;
 
-public class RatesServiceest
+public class RatesServiceTest
 {
     private RatesService _service;
     private IRatesRepository _ratesRepository;
@@ -19,11 +19,11 @@ public class RatesServiceest
     }
 
     [Test]
-    public void GivenThRatesForRUB_WhenWeGetTheBestRates_WeSholdGetARevenueOf127()
+    public void GivenTheRatesForRUB_WhenWeGetTheBestRates_WeSholdGetARevenueOf27()
     {
         DateTime startDate = new DateTime(2014, 12, 15);
         DateTime endDate = new DateTime(2014, 12, 23);
-        this.GivenThatThereAreRUBRatesFor(startDate, endDate);
+        this.GivenThatThereAreRUBRates();
 
         BestRatesResponse response = _service.GetBestRatesFor(startDate, endDate, 100);
         
@@ -35,20 +35,23 @@ public class RatesServiceest
         response.revenue.Should().BeApproximately(27.24, 0.01);
     }
 
-    private void validateRates(IEnumerable<RateDto> rates)
+    [Test]
+    public void GivenThatThereAreFewRatesForRUB_WhenWeGetTheBestRates_WeSholdGetARevenueOf5()
     {
-        rates.ToList()[0].rub.Should().BeApproximately(60.17, 0.01);
-        rates.ToList()[1].rub.Should().BeApproximately(72.99, 0.01);
-        rates.ToList()[2].rub.Should().BeApproximately(66.01, 0.01);
-        rates.ToList()[3].rub.Should().BeApproximately(61.44, 0.01);
-        rates.ToList()[4].rub.Should().BeApproximately(59.79, 0.01);
-        rates.ToList()[5].rub.Should().BeApproximately(59.79, 0.01);
-        rates.ToList()[6].rub.Should().BeApproximately(59.79, 0.01);
-        rates.ToList()[7].rub.Should().BeApproximately(54.78, 0.01);
-        rates.ToList()[8].rub.Should().BeApproximately(54.80, 0.01);
+        DateTime startDate = new DateTime(2012, 01, 05);
+        DateTime endDate = new DateTime(2012, 01, 07);
+        this.GivenThatThereAreFewRUBRates();
+
+        BestRatesResponse response = _service.GetBestRatesFor(startDate, endDate, 50);
+        
+        response.rates.Should().HaveCount(3);
+        response.buyDate.Should().Be(new DateTime(2012, 01, 05));
+        response.sellDate.Should().Be(new DateTime(2012, 01, 07));
+        response.tool.Should().Be(Currency.RUB);
+        response.revenue.Should().BeApproximately(5.14, 0.01);
     }
 
-    private void GivenThatThereAreRUBRatesFor(DateTime startDate, DateTime endDate)
+    private void GivenThatThereAreRUBRates()
     {
         List<ExchangeRate> rates = new List<ExchangeRate>();
         
@@ -107,23 +110,62 @@ public class RatesServiceest
         rates.Add(rate23);
 
 
-        Mock.Get(_ratesRepository).Setup(s => s.GetExchangeRatesFor(startDate, endDate)).Returns(rates);
-    }    
+        Mock.Get(_ratesRepository).Setup(s => s.GetExchangeRatesFor(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(rates);
+    }
+
+    private void GivenThatThereAreFewRUBRates()
+    {
+        List<ExchangeRate> rates = new List<ExchangeRate>();
+        
+        ExchangeRate rate5 = new ExchangeRate();
+        rate5.date = new DateTime(2012, 01, 05);
+        rate5.value = 40;
+        rate5.currency = Currency.RUB;
+        rates.Add(rate5);
+
+        ExchangeRate rate8 = new ExchangeRate();
+        rate8.date = new DateTime(2012, 01, 07);
+        rate8.value = 35;
+        rate8.currency = Currency.RUB;
+        rates.Add(rate8);
+
+        ExchangeRate rate19 = new ExchangeRate();
+        rate19.date = new DateTime(2012, 01, 19);
+        rate19.value = 30;
+        rate19.currency = Currency.RUB;
+        rates.Add(rate19);
+
+
+        Mock.Get(_ratesRepository).Setup(s => s.GetExchangeRatesFor(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(rates);
+    }
+
+    private void validateRates(IEnumerable<RateDto> rates)
+    {
+        rates.ToList()[0].rub.Should().BeApproximately(60.17, 0.01);
+        rates.ToList()[1].rub.Should().BeApproximately(72.99, 0.01);
+        rates.ToList()[2].rub.Should().BeApproximately(66.01, 0.01);
+        rates.ToList()[3].rub.Should().BeApproximately(61.44, 0.01);
+        rates.ToList()[4].rub.Should().BeApproximately(59.79, 0.01);
+        rates.ToList()[5].rub.Should().BeApproximately(59.79, 0.01);
+        rates.ToList()[6].rub.Should().BeApproximately(59.79, 0.01);
+        rates.ToList()[7].rub.Should().BeApproximately(54.78, 0.01);
+        rates.ToList()[8].rub.Should().BeApproximately(54.80, 0.01);
+    }
+
+    
 }
 
 /*
-Date RUB/USD
-2014-12-15 60.17
-2014-12-16 72.99
-2014-12-17 66.01
-2014-12-18 61.44
-2014-12-19 59.79
-2014-12-20 59.79
-2014-12-21 59.79
-2014-12-22 54.78
-2014-12-23 54.80
-You have $100 and the specified period is December 2014. The best case for this period is RUB for
-12/16/2014-12/22/2014 . If you bought RUB on 12/16/2014 and sell them 12/22/2014 you would get ~$127. So
-revenue is $27.
-(72.99 * 100 / 54.78) - 6 (days broker fee) = $127.24.
+You have $50 and history data:
+Date value/USD
+2012-01-05 40.00
+2012-01-07 35.00
+2012-01-19 30.00
+The revenue for these periods is:
+
+2012-01-05 - 2012-01-07: (40 * 50 / 35) - (7 - 5) = 55.6
+
+2012-01-07 - 2012-01-19: (35 * 50 / 30) - (19 - 7) = 49.3
+
+2012-01-05 - 2012-01-19: (40 * 50 / 30) - (19 - 5) = 51.6
 */
