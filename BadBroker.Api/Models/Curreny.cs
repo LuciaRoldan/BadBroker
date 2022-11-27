@@ -1,6 +1,6 @@
 namespace BadBroker.Api.Models
 {
-    public enum Curreny
+    public enum Currency
     {
         RUB,
         EUR,

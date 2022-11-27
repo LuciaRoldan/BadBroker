@@ -1,4 +1,5 @@
 using BadBroker.Api.Models;
+using BadBroker.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BadBroker.Api.Controllers;
