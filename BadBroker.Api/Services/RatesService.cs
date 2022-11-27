@@ -69,7 +69,7 @@ namespace BadBroker.Api.Services
         {
             double initialValue = buyDateRate.value * moneyUsd / sellDateRate.value;
             double fees = (sellDateRate.date - buyDateRate.date).Days * 1;
-            return initialValue - fees;
+            return initialValue - fees - moneyUsd;
         }
     }
 }

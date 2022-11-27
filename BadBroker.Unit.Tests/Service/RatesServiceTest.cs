@@ -31,8 +31,9 @@ public class RatesServiceest
         response.buyDate.Should().Be(new DateTime(2014, 12, 16));
         response.sellDate.Should().Be(new DateTime(2014, 12, 22));
         response.tool.Should().Be(Currency.RUB);
-        response.revenue.Should().BeApproximately(127.24, 0.01);
+        response.revenue.Should().BeApproximately(27.24, 0.01);
     }
+    
 
     private void GivenThatThereAreRUBRatesFor(DateTime startDate, DateTime endDate)
     {
