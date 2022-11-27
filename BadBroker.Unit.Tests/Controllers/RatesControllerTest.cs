@@ -29,29 +29,30 @@ public class RatesControllerTest
         DateTime endDate = new DateTime(2014, 12, 23);
         this.GivenThatThereAreRatesFor(startDate, endDate);
 
-        ObjectResult response = (ObjectResult) (await _controller.GetBestRatesFor(startDate, endDate, 100)).Result;
+        var response = await _controller.GetBestRatesFor(startDate, endDate, 100);
+        var result = response.Result as ObjectResult;
+        result.StatusCode.Should().Be(200);
 
-        response.StatusCode.Should().Be(200);
-        BestRatesResponse result = (BestRatesResponse) response.Value;
+        BestRatesResponse bestRatesResponse = result.Value as BestRatesResponse;
         
-        result.Should().NotBeNull();
-        result.rates.Should().HaveCount(9);
-        for (int i = 0; i < result.rates.Count(); i++)
+        bestRatesResponse.Should().NotBeNull();
+        bestRatesResponse.rates.Should().HaveCount(9);
+        for (int i = 0; i < bestRatesResponse.rates.Count(); i++)
         {
             //Note: the values in here are mocked for easy testing but do not reflect how the algorithm 
             //for calculating the best rate works. That is tested on the RatesServiceTest
 
-            RateDto rate = result.rates.ToList()[i];
+            RateDto rate = bestRatesResponse.rates.ToList()[i];
             rate.date.Should().Be(startDate.AddDays(i));
             rate.rub = i;
             rate.eur = i;
             rate.gbp = i;
             rate.jpy = i;
         }
-        result.buyDate.Should().Be(new DateTime(2014, 12, 16));
-        result.sellDate.Should().Be(new DateTime(2014, 12, 22));
-        result.tool.Should().Be(Currency.RUB);
-        result.revenue.Should().Be(27.258783297622983);
+        bestRatesResponse.buyDate.Should().Be(new DateTime(2014, 12, 16));
+        bestRatesResponse.sellDate.Should().Be(new DateTime(2014, 12, 22));
+        bestRatesResponse.tool.Should().Be(Currency.RUB);
+        bestRatesResponse.revenue.Should().Be(27.258783297622983);
     }
 
     [Test]
@@ -85,6 +86,24 @@ public class RatesControllerTest
         ActionResult<BestRatesResponse> response = await _controller.GetBestRatesFor(startDate, endDate, -100);
         
         response.Result.Should().BeOfType<BadRequestObjectResult>();
+    }
+
+    [Test]
+    public async Task GivenThatTAnErrorOcurrs_WhenTheUserHitsTheGetRates_TheyShouldGetAnInternalServerError()
+    {
+        DateTime startDate = new DateTime(2012, 01, 01);
+        DateTime endDate = startDate.AddDays(10);
+        GivenThatTheServiceThrowsAnException();
+
+        var response = await _controller.GetBestRatesFor(startDate, endDate, 100);
+        var result = response.Result as StatusCodeResult;
+
+        result.StatusCode.Should().Be(500);
+    }
+
+    private void GivenThatTheServiceThrowsAnException()
+    {
+        Mock.Get(_ratesService).Setup(s => s.GetBestRatesFor(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<double>())).Throws(new Exception());
     }
 
     private void GivenThatThereAreRatesFor(DateTime startDate, DateTime endDate)

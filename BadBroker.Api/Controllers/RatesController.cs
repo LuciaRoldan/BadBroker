@@ -35,7 +35,13 @@ public class RatesController : ControllerBase
             return BadRequest("Money can not be negative");
         }
 
-        BestRatesResponse response = await _ratesService.GetBestRatesFor(startDate, endDate, moneyUsd);
-        return Ok(response);
+        try 
+        {
+            BestRatesResponse response = await _ratesService.GetBestRatesFor(startDate, endDate, moneyUsd);
+            return Ok(response);
+        } catch ( Exception ex )
+        {
+            return StatusCode(500);
+        }
     }
 }
