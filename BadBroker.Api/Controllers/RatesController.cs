@@ -18,8 +18,8 @@ public class RatesController : ControllerBase
     }
 
     [HttpGet("best")]
-    public BestRatesResponse GetBestRatesFor([FromQuery(Name = "startDate")] DateTime startDate, [FromQuery(Name = "endDate")] DateTime endDate, [FromQuery(Name = "moneyUsd")] double moneyUsd)
+    public async Task<BestRatesResponse> GetBestRatesFor([FromQuery(Name = "startDate")] DateTime startDate, [FromQuery(Name = "endDate")] DateTime endDate, [FromQuery(Name = "moneyUsd")] double moneyUsd)
     {
-        return _ratesService.GetBestRatesFor(startDate, endDate, moneyUsd);
+        return await _ratesService.GetBestRatesFor(startDate, endDate, moneyUsd);
     }
 }

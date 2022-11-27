@@ -1,4 +1,10 @@
+using BadBroker.Api.Clients;
+using BadBroker.Api.Services;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSingleton<IExchangeRatesClient, ExchangeRatesClient>();
+builder.Services.AddSingleton<IRatesService, RatesService>();
 
 // Add services to the container.
 

@@ -1,6 +1,6 @@
 using BadBroker.Api.Models;
 using BadBroker.Api.Services;
-using BadBroker.Api.Repositories;
+using BadBroker.Api.Clients;
 using FluentAssertions;
 using Moq;
 
@@ -9,23 +9,23 @@ namespace BadBroker.Unit.Tests.Controllers;
 public class RatesServiceTest
 {
     private RatesService _service;
-    private IRatesRepository _ratesRepository;
+    private IExchangeRatesClient _ratesClient;
 
     [OneTimeSetUp]
     public void Init()
     {
-        _ratesRepository = Mock.Of<IRatesRepository>();
-        _service = new RatesService(_ratesRepository);
+        _ratesClient = Mock.Of<IExchangeRatesClient>();
+        _service = new RatesService(_ratesClient);
     }
 
     [Test]
-    public void GivenTheRatesForRUB_WhenWeGetTheBestRates_WeSholdGetARevenueOf27()
+    public async Task GivenTheRatesForRUB_WhenWeGetTheBestRates_WeShouldGetARevenueOf27()
     {
         DateTime startDate = new DateTime(2014, 12, 15);
         DateTime endDate = new DateTime(2014, 12, 23);
         this.GivenThatThereAreRUBRates();
 
-        BestRatesResponse response = _service.GetBestRatesFor(startDate, endDate, 100);
+        BestRatesResponse response = await _service.GetBestRatesFor(startDate, endDate, 100);
         
         response.rates.Should().HaveCount(9);
         validateRates(response.rates);
@@ -36,13 +36,13 @@ public class RatesServiceTest
     }
 
     [Test]
-    public void GivenThatThereAreFewRatesForRUB_WhenWeGetTheBestRates_WeSholdGetARevenueOf5()
+    public async Task GivenThatThereAreFewRatesForRUB_WhenWeGetTheBestRates_WeShouldGetARevenueOf5()
     {
         DateTime startDate = new DateTime(2012, 01, 05);
         DateTime endDate = new DateTime(2012, 01, 07);
         this.GivenThatThereAreFewRUBRates();
 
-        BestRatesResponse response = _service.GetBestRatesFor(startDate, endDate, 50);
+        BestRatesResponse response = await _service.GetBestRatesFor(startDate, endDate, 50);
         
         response.rates.Should().HaveCount(3);
         response.buyDate.Should().Be(new DateTime(2012, 01, 05));
@@ -110,7 +110,7 @@ public class RatesServiceTest
         rates.Add(rate23);
 
 
-        Mock.Get(_ratesRepository).Setup(s => s.GetExchangeRatesFor(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(rates);
+        Mock.Get(_ratesClient).Setup(s => s.GetExchangeRatesFor(It.IsAny<DateTime>(), It.IsAny<DateTime>())).ReturnsAsync(rates);
     }
 
     private void GivenThatThereAreFewRUBRates()
@@ -136,7 +136,7 @@ public class RatesServiceTest
         rates.Add(rate19);
 
 
-        Mock.Get(_ratesRepository).Setup(s => s.GetExchangeRatesFor(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(rates);
+        Mock.Get(_ratesClient).Setup(s => s.GetExchangeRatesFor(It.IsAny<DateTime>(), It.IsAny<DateTime>())).ReturnsAsync(rates);
     }
 
     private void validateRates(IEnumerable<RateDto> rates)

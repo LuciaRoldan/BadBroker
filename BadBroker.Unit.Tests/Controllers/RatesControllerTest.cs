@@ -22,13 +22,13 @@ public class RatesControllerTest
     }
 
     [Test]
-    public void GivenTheBestRatesForRUB_WhenTheUserHitsTheGetRates_TheyShouldGetTheBiggestRevenue()
+    public async Task GivenTheBestRatesForRUB_WhenTheUserHitsTheGetRates_TheyShouldGetTheBiggestRevenue()
     {
         DateTime startDate = new DateTime(2014, 12, 15);
         DateTime endDate = new DateTime(2014, 12, 23);
         this.GivenThatThereAreRatesFor(startDate, endDate);
 
-        BestRatesResponse response = _controller.GetBestRatesFor(startDate, endDate, 100);
+        BestRatesResponse response = await _controller.GetBestRatesFor(startDate, endDate, 100);
         
         response.rates.Should().HaveCount(9);
         for (int i = 0; i < response.rates.Count(); i++)
@@ -74,7 +74,7 @@ public class RatesControllerTest
         mockedResponse.tool = Currency.RUB;
         mockedResponse.revenue = 27.258783297622983;
 
-        Mock.Get(_ratesService).Setup(s => s.GetBestRatesFor(startDate, endDate, 100)).Returns(mockedResponse);
+        Mock.Get(_ratesService).Setup(s => s.GetBestRatesFor(startDate, endDate, 100)).ReturnsAsync(mockedResponse);
     }
     
 }

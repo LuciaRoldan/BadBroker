@@ -1,26 +1,26 @@
 using BadBroker.Api.Models;
-using BadBroker.Api.Repositories;
+using BadBroker.Api.Clients;
 
 namespace BadBroker.Api.Services
 {
     public interface IRatesService
     {
-        BestRatesResponse GetBestRatesFor(DateTime startDate, DateTime endDate, double moneyUsd);
+        Task<BestRatesResponse> GetBestRatesFor(DateTime startDate, DateTime endDate, double moneyUsd);
     }
 
     public class RatesService : IRatesService
     {
-        private IRatesRepository _ratesRepository;
+        private IExchangeRatesClient _ratesClient;
 
-        public RatesService(IRatesRepository ratesRepository)
+        public RatesService(IExchangeRatesClient ratesClient)
         {
-            this._ratesRepository = ratesRepository;
+            this._ratesClient = ratesClient;
         }
 
-        public BestRatesResponse GetBestRatesFor(DateTime startDate, DateTime endDate, double moneyUsd)
+        public async Task<BestRatesResponse> GetBestRatesFor(DateTime startDate, DateTime endDate, double moneyUsd)
         {
             List<Currency> currencies = Enum.GetValues(typeof(Currency)).Cast<Currency>().ToList();
-            List<ExchangeRate> rates = _ratesRepository.GetExchangeRatesFor(startDate, endDate);
+            List<ExchangeRate> rates = await _ratesClient.GetExchangeRatesFor(startDate, endDate);
             BestRatesResponse bestRate = new BestRatesResponse();
             bestRate.rates = mapToRatesDto(rates);
 
