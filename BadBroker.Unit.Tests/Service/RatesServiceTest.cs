@@ -151,21 +151,5 @@ public class RatesServiceTest
         rates.ToList()[7].rub.Should().BeApproximately(54.78, 0.01);
         rates.ToList()[8].rub.Should().BeApproximately(54.80, 0.01);
     }
-
     
 }
-
-/*
-You have $50 and history data:
-Date value/USD
-2012-01-05 40.00
-2012-01-07 35.00
-2012-01-19 30.00
-The revenue for these periods is:
-
-2012-01-05 - 2012-01-07: (40 * 50 / 35) - (7 - 5) = 55.6
-
-2012-01-07 - 2012-01-19: (35 * 50 / 30) - (19 - 7) = 49.3
-
-2012-01-05 - 2012-01-19: (40 * 50 / 30) - (19 - 5) = 51.6
-*/
