@@ -1,3 +1,4 @@
+using BadBroker.Api.Exceptions;
 using BadBroker.Api.Helpers;
 using BadBroker.Api.Models;
 using Newtonsoft.Json;
@@ -43,7 +44,7 @@ namespace BadBroker.Api.Clients
             if (!response.IsSuccessStatusCode)
             {
                 var errorMessage = await response.Content.ReadAsStringAsync();
-                throw new Exception($"Error getting exchange rate");
+                throw new ConnectionErrorException();
             }
 
             var apiKeyJson = await response.Content.ReadAsStringAsync();
