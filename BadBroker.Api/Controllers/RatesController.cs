@@ -25,6 +25,16 @@ public class RatesController : ControllerBase
             return BadRequest("End date should be after start date");
         }
 
+        if((endDate - startDate).Days > 60)
+        {
+            return BadRequest("Period can not exceed 60 days");
+        }
+
+        if(moneyUsd < 0) 
+        {
+            return BadRequest("Money can not be negative");
+        }
+
         BestRatesResponse response = await _ratesService.GetBestRatesFor(startDate, endDate, moneyUsd);
         return Ok(response);
     }

@@ -59,9 +59,30 @@ public class RatesControllerTest
     {
         DateTime startDate = new DateTime(2014, 12, 15);
         DateTime endDate = new DateTime(2013, 12, 23);
-        this.GivenThatThereAreRatesFor(startDate, endDate);
 
         ActionResult<BestRatesResponse> response = await _controller.GetBestRatesFor(startDate, endDate, 100);
+        
+        response.Result.Should().BeOfType<BadRequestObjectResult>();
+    }
+
+    [Test]
+    public async Task GivenThatTheDatesAreMoreThan2MonthsApart_WhenTheUserHitsTheGetRates_TheyShouldGetABadRequest()
+    {
+        DateTime startDate = new DateTime(2012, 01, 01);
+        DateTime endDate = startDate.AddDays(61);
+
+        ActionResult<BestRatesResponse> response = await _controller.GetBestRatesFor(startDate, endDate, 100);
+        
+        response.Result.Should().BeOfType<BadRequestObjectResult>();
+    }
+
+    [Test]
+    public async Task GivenThatTheMoneyIsLowerThan0_WhenTheUserHitsTheGetRates_TheyShouldGetABadRequest()
+    {
+        DateTime startDate = new DateTime(2012, 01, 01);
+        DateTime endDate = startDate.AddDays(10);
+
+        ActionResult<BestRatesResponse> response = await _controller.GetBestRatesFor(startDate, endDate, -100);
         
         response.Result.Should().BeOfType<BadRequestObjectResult>();
     }
