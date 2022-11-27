@@ -1,6 +1,6 @@
 using BadBroker.Api.Models;
 using BadBroker.Api.Services;
-using BadBroker.Api.Repositories;
+using BadBroker.Api.Clients;
 using FluentAssertions;
 using Moq;
 
@@ -9,13 +9,13 @@ namespace BadBroker.Unit.Tests.Controllers;
 public class RatesServiceTest
 {
     private RatesService _service;
-    private IRatesRepository _ratesRepository;
+    private IExchangeRatesClient _ratesClient;
 
     [OneTimeSetUp]
     public void Init()
     {
-        _ratesRepository = Mock.Of<IRatesRepository>();
-        _service = new RatesService(_ratesRepository);
+        _ratesClient = Mock.Of<IExchangeRatesClient>();
+        _service = new RatesService(_ratesClient);
     }
 
     [Test]
@@ -110,7 +110,7 @@ public class RatesServiceTest
         rates.Add(rate23);
 
 
-        Mock.Get(_ratesRepository).Setup(s => s.GetExchangeRatesFor(It.IsAny<DateTime>(), It.IsAny<DateTime>())).ReturnsAsync(rates);
+        Mock.Get(_ratesClient).Setup(s => s.GetExchangeRatesFor(It.IsAny<DateTime>(), It.IsAny<DateTime>())).ReturnsAsync(rates);
     }
 
     private void GivenThatThereAreFewRUBRates()
@@ -136,7 +136,7 @@ public class RatesServiceTest
         rates.Add(rate19);
 
 
-        Mock.Get(_ratesRepository).Setup(s => s.GetExchangeRatesFor(It.IsAny<DateTime>(), It.IsAny<DateTime>())).ReturnsAsync(rates);
+        Mock.Get(_ratesClient).Setup(s => s.GetExchangeRatesFor(It.IsAny<DateTime>(), It.IsAny<DateTime>())).ReturnsAsync(rates);
     }
 
     private void validateRates(IEnumerable<RateDto> rates)

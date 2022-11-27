@@ -1,6 +1,6 @@
 using BadBroker.Api.Models;
 using BadBroker.Unit.Tests.MockServer;
-using BadBroker.Api.Repositories;
+using BadBroker.Api.Clients;
 using FluentAssertions;
 using Microsoft.AspNetCore.TestHost;
 using Moq;
@@ -10,9 +10,9 @@ using Microsoft.AspNetCore.Hosting;
 
 namespace BadBroker.Unit.Tests.Controllers;
 
-public class RatesRepositoryTest
+public class ExchangeRatesClientExchangeRatesClientTest
 {
-    private RatesRepository _repository;
+    private ExchangeRatesClient _client;
     private TestServer _server;
     private ExchangeRateServerMock _exchangeRateServerMock = new ExchangeRateServerMock();
 
@@ -21,7 +21,7 @@ public class RatesRepositoryTest
     {
         var httpClient = new HttpClient();
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("APIKEY", "APIKEY");
-        _repository = new RatesRepository(_exchangeRateServerMock.Url, httpClient);
+        _client = new ExchangeRatesClient(_exchangeRateServerMock.Url, httpClient);
     }
 
     [Test]
@@ -32,7 +32,7 @@ public class RatesRepositoryTest
         _exchangeRateServerMock.canGetExchangeRatesSuccessfullyFor(startDate);
         _exchangeRateServerMock.canGetExchangeRatesSuccessfullyFor(endDate);
 
-        List<ExchangeRate> rates = await _repository.GetExchangeRatesFor(startDate, endDate);
+        List<ExchangeRate> rates = await _client.GetExchangeRatesFor(startDate, endDate);
         
         rates.Should().HaveCount(8);
 

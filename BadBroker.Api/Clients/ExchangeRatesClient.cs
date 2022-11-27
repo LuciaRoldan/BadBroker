@@ -2,20 +2,20 @@ using BadBroker.Api.Helpers;
 using BadBroker.Api.Models;
 using Newtonsoft.Json;
 
-namespace BadBroker.Api.Repositories
+namespace BadBroker.Api.Clients
 {
-    public interface IRatesRepository
+    public interface IExchangeRatesClient
     {
         Task<List<ExchangeRate>> GetExchangeRatesFor(DateTime startDate, DateTime endDate);
     }
 
-    public class RatesRepository : IRatesRepository
+    public class ExchangeRatesClient : IExchangeRatesClient
     {
         private HttpClient _client;
         private string _baseUrl = "https://openexchangerates.org/api";
         private string _appId = "appId";
 
-        public RatesRepository(string url, HttpClient client)
+        public ExchangeRatesClient(string url, HttpClient client)
         {
             this._client = client;
             this._baseUrl = url;
