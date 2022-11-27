@@ -28,12 +28,25 @@ public class RatesServiceest
         BestRatesResponse response = _service.GetBestRatesFor(startDate, endDate, 100);
         
         response.rates.Should().HaveCount(9);
+        validateRates(response.rates);
         response.buyDate.Should().Be(new DateTime(2014, 12, 16));
         response.sellDate.Should().Be(new DateTime(2014, 12, 22));
         response.tool.Should().Be(Currency.RUB);
         response.revenue.Should().BeApproximately(27.24, 0.01);
     }
-    
+
+    private void validateRates(IEnumerable<RateDto> rates)
+    {
+        rates.ToList()[0].rub.Should().BeApproximately(60.17, 0.01);
+        rates.ToList()[1].rub.Should().BeApproximately(72.99, 0.01);
+        rates.ToList()[2].rub.Should().BeApproximately(66.01, 0.01);
+        rates.ToList()[3].rub.Should().BeApproximately(61.44, 0.01);
+        rates.ToList()[4].rub.Should().BeApproximately(59.79, 0.01);
+        rates.ToList()[5].rub.Should().BeApproximately(59.79, 0.01);
+        rates.ToList()[6].rub.Should().BeApproximately(59.79, 0.01);
+        rates.ToList()[7].rub.Should().BeApproximately(54.78, 0.01);
+        rates.ToList()[8].rub.Should().BeApproximately(54.80, 0.01);
+    }
 
     private void GivenThatThereAreRUBRatesFor(DateTime startDate, DateTime endDate)
     {

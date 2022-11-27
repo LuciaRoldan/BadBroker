@@ -56,12 +56,12 @@ namespace BadBroker.Api.Services
             return rates.GroupBy(r => r.date).Select(g => 
                 new RateDto()
                 {
-                    date = g.Key
+                    date = g.Key,
+                    rub = g.Any( e => e.currency == Currency.RUB) ? g.First( e => e.currency == Currency.RUB).value : null,
+                    eur = g.Any( e => e.currency == Currency.EUR) ? g.First( e => e.currency == Currency.EUR).value : null,
+                    gbp = g.Any( e => e.currency == Currency.GBP) ? g.First( e => e.currency == Currency.GBP).value : null,
+                    jpy = g.Any( e => e.currency == Currency.JPY) ? g.First( e => e.currency == Currency.JPY).value : null
                 }
-                //rate.rub = g.First( e => e.currency == Currency.RUB).value;
-                //rate.eur = g.First( e => e.currency == Currency.EUR).value;
-                //rate.gbp = g.First( e => e.currency == Currency.GBP).value;
-                //rate.jpy = g.First( e => e.currency == Currency.JPY).value;
             );
         }
 
