@@ -19,9 +19,8 @@ public class ExchangeRatesClientExchangeRatesClientTest
     [OneTimeSetUp]
     public void Init()
     {
-        var httpClient = new HttpClient();
-        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("APIKEY", "APIKEY");
-        _client = new ExchangeRatesClient(_exchangeRateServerMock.Url, httpClient);
+        _client = new ExchangeRatesClient();
+        _client._baseUrl = _exchangeRateServerMock.Url;
     }
 
     [Test]
@@ -67,5 +66,15 @@ public class ExchangeRatesClientExchangeRatesClientTest
         rates[7].date.Should().Be(16.December(2014));
         rates[7].currency.Should().Be(Currency.JPY);
         rates[7].value.Should().Be(4);
+    }
+
+    [Test]
+    public async Task GivenThatTheExchangeServiceIsBroken_WhenWeGetTheRates_WeGetAnException()
+    {
+        _exchangeRateServerMock.getExchangeRatesSuccessfullyReturnError();
+
+        var act = (async () => await _client.GetExchangeRatesFor(new DateTime(2014, 12, 15), new DateTime(2014, 12, 16)));
+        
+        await act.Should().ThrowAsync<Exception>();
     }
 }

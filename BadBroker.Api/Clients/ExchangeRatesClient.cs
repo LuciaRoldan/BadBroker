@@ -12,13 +12,12 @@ namespace BadBroker.Api.Clients
     public class ExchangeRatesClient : IExchangeRatesClient
     {
         private HttpClient _client;
-        private string _baseUrl = "https://openexchangerates.org/api";
-        private string _appId = "appId";
+        public string _baseUrl {get; set;} = "https://openexchangerates.org/api";
+        private string _appId = "76248f4a4a374a07a56e64f2fe683b96";
 
-        public ExchangeRatesClient(string url, HttpClient client)
+        public ExchangeRatesClient()
         {
-            this._client = client;
-            this._baseUrl = url;
+            this._client = new HttpClient();
         }
 
         public async Task<List<ExchangeRate>> GetExchangeRatesFor(DateTime startDate, DateTime endDate)
@@ -36,7 +35,7 @@ namespace BadBroker.Api.Clients
             HttpRequestMessage message = new HttpRequestMessage();
 
             message.Headers.Add("Authorization", "Token " + _appId);
-            message.RequestUri = new Uri($"{_baseUrl}/historical/{date.ToString("yyyy-MM-dd")}");
+            message.RequestUri = new Uri($"{_baseUrl}/historical/{date.ToString("yyyy-MM-dd")}.json");
             message.Method = HttpMethod.Get;
 
             HttpResponseMessage response = await _client.SendAsync(message);

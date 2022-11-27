@@ -47,7 +47,7 @@ namespace BadBroker.Unit.Tests.MockServer
         internal void canGetExchangeRatesSuccessfullyFor(DateTime date)
         {
             _server.Given(Request.Create()
-                 .WithPath("/historical/" + date.ToString("yyyy-MM-dd"))
+                 .WithPath("/historical/" + date.ToString("yyyy-MM-dd") + ".json")
                  .UsingGet())
             .RespondWith(Response.Create()
                  .WithStatusCode(200)
@@ -69,6 +69,14 @@ namespace BadBroker.Unit.Tests.MockServer
                                 "} " +
                             "} "                            
                             ));
+        }
+
+        internal void getExchangeRatesSuccessfullyReturnError()
+        {
+            _server.Given(Request.Create()
+                 .UsingGet())
+            .RespondWith(Response.Create()
+                 .WithStatusCode(400));
         }
     }
 }
