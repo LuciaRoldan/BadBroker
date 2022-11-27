@@ -12,15 +12,13 @@ namespace BadBroker.Unit.Tests.Controllers;
 public class RatesControllerTest
 {
     private RatesController _controller;
-    private ILogger<RatesController> _logger;
     private IRatesService _ratesService;
 
     [OneTimeSetUp]
     public void Init()
     {
-        _logger = Mock.Of<ILogger<RatesController>>();
         _ratesService = Mock.Of<IRatesService>();
-        _controller = new RatesController(_logger, _ratesService);
+        _controller = new RatesController(_ratesService);
     }
 
     [Test]

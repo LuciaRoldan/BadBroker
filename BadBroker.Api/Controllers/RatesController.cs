@@ -9,12 +9,10 @@ namespace BadBroker.Api.Controllers;
 [Route("[controller]")]
 public class RatesController : ControllerBase
 {
-    private readonly ILogger<RatesController> _logger;
     private IRatesService _ratesService;
 
-    public RatesController(ILogger<RatesController> logger, IRatesService ratesService)
+    public RatesController(IRatesService ratesService)
     {
-        _logger = logger;
         _ratesService = ratesService;
     }
 
