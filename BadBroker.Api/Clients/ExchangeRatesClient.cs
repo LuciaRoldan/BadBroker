@@ -13,11 +13,13 @@ namespace BadBroker.Api.Clients
     public class ExchangeRatesClient : IExchangeRatesClient
     {
         private HttpClient _client;
-        public string _baseUrl {get; set;} = "https://openexchangerates.org/api";
+        public string _baseUrl {get; set;}
         private string _appId = "";
 
-        public ExchangeRatesClient()
+        public ExchangeRatesClient(IConfiguration config)
         {
+            this._baseUrl = config["ExchangeRatesConection:Url"];
+            this._appId = config["ExchangeRatesConection:AppId"];
             this._client = new HttpClient();
         }
 
