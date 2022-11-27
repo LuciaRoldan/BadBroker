@@ -4,6 +4,7 @@ using BadBroker.Api.Clients;
 using BadBroker.Api.Exceptions;
 using FluentAssertions;
 using Moq;
+using Microsoft.Extensions.Configuration;
 
 namespace BadBroker.Unit.Tests.Controllers;
 
@@ -16,7 +17,9 @@ public class RatesServiceTest
     public void Init()
     {
         _ratesClient = Mock.Of<IExchangeRatesClient>();
-        _service = new RatesService(_ratesClient);
+        IConfigurationSection mockedConfig = Mock.Of<IConfigurationSection>();
+        Mock.Get(mockedConfig).SetupGet(m => m[It.Is<string>(s => s == "BrokerFee")]).Returns("1");
+        _service = new RatesService(_ratesClient, mockedConfig);
     }
 
     [Test]

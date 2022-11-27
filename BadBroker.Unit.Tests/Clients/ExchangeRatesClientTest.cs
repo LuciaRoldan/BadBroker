@@ -7,6 +7,7 @@ using Moq;
 using System.Net.Http.Headers;
 using FluentAssertions.Extensions;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 
 namespace BadBroker.Unit.Tests.Controllers;
 
@@ -19,7 +20,10 @@ public class ExchangeRatesClientExchangeRatesClientTest
     [OneTimeSetUp]
     public void Init()
     {
-        _client = new ExchangeRatesClient();
+        IConfigurationSection mockedConfig = Mock.Of<IConfigurationSection>();
+        Mock.Get(mockedConfig).SetupGet(m => m[It.Is<string>(s => s == "ExchangeRatesConection:Url")]).Returns(_exchangeRateServerMock.Url);
+        Mock.Get(mockedConfig).SetupGet(m => m[It.Is<string>(s => s == "ExchangeRatesConection:AppId")]).Returns("appId");
+        _client = new ExchangeRatesClient(mockedConfig);
         _client._baseUrl = _exchangeRateServerMock.Url;
     }
 

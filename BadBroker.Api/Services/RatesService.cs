@@ -12,10 +12,12 @@ namespace BadBroker.Api.Services
     public class RatesService : IRatesService
     {
         private IExchangeRatesClient _ratesClient;
+        private double _brokerFee;
 
-        public RatesService(IExchangeRatesClient ratesClient)
+        public RatesService(IExchangeRatesClient ratesClient, IConfiguration config)
         {
             this._ratesClient = ratesClient;
+            this._brokerFee = Convert.ToDouble(config["BrokerFee"]);
         }
 
         public async Task<BestRatesResponse> GetBestRatesFor(DateTime startDate, DateTime endDate, double moneyUsd)
@@ -78,7 +80,7 @@ namespace BadBroker.Api.Services
         private double DetermineRevenueFor(ExchangeRate buyDateRate, ExchangeRate sellDateRate, double moneyUsd)
         {
             double initialValue = buyDateRate.value * moneyUsd / sellDateRate.value;
-            double fees = (sellDateRate.date - buyDateRate.date).Days * 1;
+            double fees = (sellDateRate.date - buyDateRate.date).Days * _brokerFee;
             return initialValue - fees - moneyUsd;
         }
     }
