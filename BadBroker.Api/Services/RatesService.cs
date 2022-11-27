@@ -1,5 +1,6 @@
 using BadBroker.Api.Models;
 using BadBroker.Api.Clients;
+using BadBroker.Api.Exceptions;
 
 namespace BadBroker.Api.Services
 {
@@ -22,7 +23,7 @@ namespace BadBroker.Api.Services
             List<Currency> currencies = Enum.GetValues(typeof(Currency)).Cast<Currency>().ToList();
             List<ExchangeRate> rates = await _ratesClient.GetExchangeRatesFor(startDate, endDate);
             BestRatesResponse bestRate = new BestRatesResponse();
-            bestRate.rates = mapToRatesDto(rates);
+            bestRate.rates = MapToRatesDto(rates);
 
             foreach( Currency currency in currencies) 
             {
@@ -35,7 +36,7 @@ namespace BadBroker.Api.Services
                     {
                         if(sellDateRate.date > buyDateRate.date) 
                         {
-                            double revenue = determineRevenueFor(buyDateRate, sellDateRate, moneyUsd);
+                            double revenue = DetermineRevenueFor(buyDateRate, sellDateRate, moneyUsd);
                             if(revenue > bestRate.revenue)
                             {
                                 bestRate.buyDate = buyDateRate.date;
@@ -48,10 +49,19 @@ namespace BadBroker.Api.Services
                 }
 
             }
+            ValidateRevenue(bestRate);
             return bestRate;
         }
 
-        private IEnumerable<RateDto> mapToRatesDto(List<ExchangeRate> rates)
+        private void ValidateRevenue(BestRatesResponse bestRate)
+        {
+            if(bestRate.revenue <= 0)
+            {
+                throw new NoRevenueException();
+            }
+        }
+
+        private IEnumerable<RateDto> MapToRatesDto(List<ExchangeRate> rates)
         {
             return rates.GroupBy(r => r.date).Select(g => 
                 new RateDto()
@@ -65,7 +75,7 @@ namespace BadBroker.Api.Services
             );
         }
 
-        private double determineRevenueFor(ExchangeRate buyDateRate, ExchangeRate sellDateRate, double moneyUsd)
+        private double DetermineRevenueFor(ExchangeRate buyDateRate, ExchangeRate sellDateRate, double moneyUsd)
         {
             double initialValue = buyDateRate.value * moneyUsd / sellDateRate.value;
             double fees = (sellDateRate.date - buyDateRate.date).Days * 1;

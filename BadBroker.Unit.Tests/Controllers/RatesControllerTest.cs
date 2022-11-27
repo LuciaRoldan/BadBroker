@@ -1,6 +1,7 @@
 using BadBroker.Api.Controllers;
 using BadBroker.Api.Models;
 using BadBroker.Api.Services;
+using BadBroker.Api.Exceptions;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -99,6 +100,23 @@ public class RatesControllerTest
         var result = response.Result as StatusCodeResult;
 
         result.StatusCode.Should().Be(500);
+    }
+
+    [Test]
+    public async Task GivenThatThereIsNoRevenue_WhenTheUserHitsTheGetRates_TheyShouldGetAnInternalServerError()
+    {
+        DateTime startDate = new DateTime(2012, 01, 01);
+        DateTime endDate = startDate.AddDays(10);
+        GivenThatTheServiceThrowsANoRevenueException();
+
+        ActionResult<BestRatesResponse> response = await _controller.GetBestRatesFor(startDate, endDate, 100);
+        
+        response.Result.Should().BeOfType<ConflictObjectResult>();
+    }
+
+    private void GivenThatTheServiceThrowsANoRevenueException()
+    {
+        Mock.Get(_ratesService).Setup(s => s.GetBestRatesFor(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<double>())).Throws(new NoRevenueException());
     }
 
     private void GivenThatTheServiceThrowsAnException()

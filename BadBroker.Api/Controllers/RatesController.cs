@@ -1,3 +1,4 @@
+using BadBroker.Api.Exceptions;
 using BadBroker.Api.Models;
 using BadBroker.Api.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -39,7 +40,10 @@ public class RatesController : ControllerBase
         {
             BestRatesResponse response = await _ratesService.GetBestRatesFor(startDate, endDate, moneyUsd);
             return Ok(response);
-        } catch ( Exception ex )
+        } catch (NoRevenueException)
+        {
+            return Conflict("Can't get revenue for the dates specified");
+        } catch ( Exception )
         {
             return StatusCode(500);
         }
