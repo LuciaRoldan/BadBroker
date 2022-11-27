@@ -1,5 +1,6 @@
 using BadBroker.Api.Controllers;
 using BadBroker.Api.Models;
+using BadBroker.Api.Services;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -35,7 +36,7 @@ public class RatesControllerTest
             //Note: the values in here are mocked for easy testing but do not reflect how the algorithm 
             //for calculating the best rate works. That is tested on the RatesServiceTest
 
-            Rate rate = response.rates.ToList()[i];
+            RateDto rate = response.rates.ToList()[i];
             rate.date.Should().Be(startDate.AddDays(i));
             rate.rub = i;
             rate.eur = i;
@@ -44,19 +45,19 @@ public class RatesControllerTest
         }
         response.buyDate.Should().Be(new DateTime(2014, 12, 16));
         response.sellDate.Should().Be(new DateTime(2014, 12, 22));
-        response.tool.Should().Be(Curreny.RUB);
+        response.tool.Should().Be(Currency.RUB);
         response.revenue.Should().Be(27.258783297622983);
     }
 
     private void GivenThatThereAreRatesFor(DateTime startDate, DateTime endDate)
     {
-        List<Rate> rates = new List<Rate>();
+        List<RateDto> rates = new List<RateDto>();
         for (int i = 0; i <= (endDate - startDate).TotalDays; i++)
         {
             //Note: the values in here are mocked for easy testing but do not reflect how the algorithm 
             //for calculating the best rate works. That is tested on the RatesServiceTest
 
-            Rate rate = new Rate();
+            RateDto rate = new RateDto();
             rate.date = startDate.AddDays(i);
             rate.rub = i;
             rate.eur = i;
@@ -70,7 +71,7 @@ public class RatesControllerTest
         mockedResponse.rates = rates;
         mockedResponse.buyDate = new DateTime(2014, 12, 16);
         mockedResponse.sellDate = new DateTime(2014, 12, 22);
-        mockedResponse.tool = Curreny.RUB;
+        mockedResponse.tool = Currency.RUB;
         mockedResponse.revenue = 27.258783297622983;
 
         Mock.Get(_ratesService).Setup(s => s.GetBestRatesFor(startDate, endDate, 100)).Returns(mockedResponse);

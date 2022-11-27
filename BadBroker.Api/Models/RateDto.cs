@@ -1,6 +1,6 @@
 namespace BadBroker.Api.Models
 {
-    public class Rate
+    public class RateDto
     {
         public DateTime date { get; set; }
         public double rub { get; set; }
