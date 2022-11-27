@@ -1,3 +1,4 @@
+using BadBroker.Api.Exceptions;
 using BadBroker.Api.Models;
 using BadBroker.Api.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -8,12 +9,10 @@ namespace BadBroker.Api.Controllers;
 [Route("[controller]")]
 public class RatesController : ControllerBase
 {
-    private readonly ILogger<RatesController> _logger;
     private IRatesService _ratesService;
 
-    public RatesController(ILogger<RatesController> logger, IRatesService ratesService)
+    public RatesController(IRatesService ratesService)
     {
-        _logger = logger;
         _ratesService = ratesService;
     }
 
@@ -35,7 +34,16 @@ public class RatesController : ControllerBase
             return BadRequest("Money can not be negative");
         }
 
-        BestRatesResponse response = await _ratesService.GetBestRatesFor(startDate, endDate, moneyUsd);
-        return Ok(response);
+        try 
+        {
+            BestRatesResponse response = await _ratesService.GetBestRatesFor(startDate, endDate, moneyUsd);
+            return Ok(response);
+        } catch (NoRevenueException)
+        {
+            return Conflict("Can't get revenue for the dates specified");
+        } catch ( Exception )
+        {
+            return StatusCode(500);
+        }
     }
 }

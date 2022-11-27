@@ -1,6 +1,7 @@
 using BadBroker.Api.Models;
 using BadBroker.Api.Services;
 using BadBroker.Api.Clients;
+using BadBroker.Api.Exceptions;
 using FluentAssertions;
 using Moq;
 
@@ -49,6 +50,33 @@ public class RatesServiceTest
         response.sellDate.Should().Be(new DateTime(2012, 01, 07));
         response.tool.Should().Be(Currency.RUB);
         response.revenue.Should().BeApproximately(5.14, 0.01);
+    }
+
+    [Test]
+    public async Task GivenThatTheRatesStayTheSame_WhenWeGetTheRates_WeGetANoRevenueException()
+    {
+        DateTime startDate = new DateTime(2012, 01, 05);
+        DateTime endDate = new DateTime(2012, 01, 07);
+        this.GivenThatTheRatesStayTheSameFor(startDate, endDate);
+
+        var act = (async () => await _service.GetBestRatesFor(startDate, endDate, 50));
+        
+        await act.Should().ThrowAsync<NoRevenueException>();
+    }
+
+    private void GivenThatTheRatesStayTheSameFor(DateTime startDate, DateTime endDate)
+    {
+        List<ExchangeRate> rates = new List<ExchangeRate>();
+        for (int i = 0; i <= (endDate - startDate).TotalDays; i++)
+        {
+            ExchangeRate rate = new ExchangeRate();
+            rate.date = startDate.AddDays(i);
+            rate.value = 34.87;
+            rate.currency = Currency.EUR;
+            rates.Add(rate);
+        }
+
+        Mock.Get(_ratesClient).Setup(s => s.GetExchangeRatesFor(It.IsAny<DateTime>(), It.IsAny<DateTime>())).ReturnsAsync(rates);
     }
 
     private void GivenThatThereAreRUBRates()
