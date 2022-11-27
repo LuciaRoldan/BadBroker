@@ -13,7 +13,7 @@ namespace BadBroker.Api.Clients
     {
         private HttpClient _client;
         public string _baseUrl {get; set;} = "https://openexchangerates.org/api";
-        private string _appId = "76248f4a4a374a07a56e64f2fe683b96";
+        private string _appId = "";
 
         public ExchangeRatesClient()
         {

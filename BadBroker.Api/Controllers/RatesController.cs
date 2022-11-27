@@ -18,8 +18,24 @@ public class RatesController : ControllerBase
     }
 
     [HttpGet("best")]
-    public async Task<BestRatesResponse> GetBestRatesFor([FromQuery(Name = "startDate")] DateTime startDate, [FromQuery(Name = "endDate")] DateTime endDate, [FromQuery(Name = "moneyUsd")] double moneyUsd)
+    public async Task<ActionResult<BestRatesResponse>> GetBestRatesFor([FromQuery(Name = "startDate")] DateTime startDate, [FromQuery(Name = "endDate")] DateTime endDate, [FromQuery(Name = "moneyUsd")] double moneyUsd)
     {
-        return await _ratesService.GetBestRatesFor(startDate, endDate, moneyUsd);
+        if(endDate <= startDate)
+        {
+            return BadRequest("End date should be after start date");
+        }
+
+        if((endDate - startDate).Days > 60)
+        {
+            return BadRequest("Period can not exceed 60 days");
+        }
+
+        if(moneyUsd < 0) 
+        {
+            return BadRequest("Money can not be negative");
+        }
+
+        BestRatesResponse response = await _ratesService.GetBestRatesFor(startDate, endDate, moneyUsd);
+        return Ok(response);
     }
 }

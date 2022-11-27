@@ -2,6 +2,7 @@ using BadBroker.Api.Controllers;
 using BadBroker.Api.Models;
 using BadBroker.Api.Services;
 using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -28,25 +29,62 @@ public class RatesControllerTest
         DateTime endDate = new DateTime(2014, 12, 23);
         this.GivenThatThereAreRatesFor(startDate, endDate);
 
-        BestRatesResponse response = await _controller.GetBestRatesFor(startDate, endDate, 100);
+        ObjectResult response = (ObjectResult) (await _controller.GetBestRatesFor(startDate, endDate, 100)).Result;
+
+        response.StatusCode.Should().Be(200);
+        BestRatesResponse result = (BestRatesResponse) response.Value;
         
-        response.rates.Should().HaveCount(9);
-        for (int i = 0; i < response.rates.Count(); i++)
+        result.Should().NotBeNull();
+        result.rates.Should().HaveCount(9);
+        for (int i = 0; i < result.rates.Count(); i++)
         {
             //Note: the values in here are mocked for easy testing but do not reflect how the algorithm 
             //for calculating the best rate works. That is tested on the RatesServiceTest
 
-            RateDto rate = response.rates.ToList()[i];
+            RateDto rate = result.rates.ToList()[i];
             rate.date.Should().Be(startDate.AddDays(i));
             rate.rub = i;
             rate.eur = i;
             rate.gbp = i;
             rate.jpy = i;
         }
-        response.buyDate.Should().Be(new DateTime(2014, 12, 16));
-        response.sellDate.Should().Be(new DateTime(2014, 12, 22));
-        response.tool.Should().Be(Currency.RUB);
-        response.revenue.Should().Be(27.258783297622983);
+        result.buyDate.Should().Be(new DateTime(2014, 12, 16));
+        result.sellDate.Should().Be(new DateTime(2014, 12, 22));
+        result.tool.Should().Be(Currency.RUB);
+        result.revenue.Should().Be(27.258783297622983);
+    }
+
+    [Test]
+    public async Task GivenThatTheValuesAreIncorrect_WhenTheUserHitsTheGetRates_TheyShouldGetABadRequest()
+    {
+        DateTime startDate = new DateTime(2014, 12, 15);
+        DateTime endDate = new DateTime(2013, 12, 23);
+
+        ActionResult<BestRatesResponse> response = await _controller.GetBestRatesFor(startDate, endDate, 100);
+        
+        response.Result.Should().BeOfType<BadRequestObjectResult>();
+    }
+
+    [Test]
+    public async Task GivenThatTheDatesAreMoreThan2MonthsApart_WhenTheUserHitsTheGetRates_TheyShouldGetABadRequest()
+    {
+        DateTime startDate = new DateTime(2012, 01, 01);
+        DateTime endDate = startDate.AddDays(61);
+
+        ActionResult<BestRatesResponse> response = await _controller.GetBestRatesFor(startDate, endDate, 100);
+        
+        response.Result.Should().BeOfType<BadRequestObjectResult>();
+    }
+
+    [Test]
+    public async Task GivenThatTheMoneyIsLowerThan0_WhenTheUserHitsTheGetRates_TheyShouldGetABadRequest()
+    {
+        DateTime startDate = new DateTime(2012, 01, 01);
+        DateTime endDate = startDate.AddDays(10);
+
+        ActionResult<BestRatesResponse> response = await _controller.GetBestRatesFor(startDate, endDate, -100);
+        
+        response.Result.Should().BeOfType<BadRequestObjectResult>();
     }
 
     private void GivenThatThereAreRatesFor(DateTime startDate, DateTime endDate)
